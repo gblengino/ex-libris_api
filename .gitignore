@@ -1,0 +1,89 @@
+# ==========================================
+# Python / Django
+# ==========================================
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Caché de Pytest / Coverage
+.cache
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Django local
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+
+# ==========================================
+# Gestor de Entornos (uv & Venvs)
+# ==========================================
+.venv/
+venv/
+ENV/
+env/
+# Nota: pyproject.toml y uv.lock SÍ deben subirse a Git.
+
+# ==========================================
+# Variables de entorno y credenciales (¡Seguridad!)
+# ==========================================
+.env
+.env.*
+!.env.example
+
+# ==========================================
+# Docker & Contenedores
+# ==========================================
+# Archivos/directorios generados por montajes de volúmenes locales o datos persistentes
+.docker/
+*.db
+docker-data/
+
+# ==========================================
+# Editores de código e IDEs
+# ==========================================
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ==========================================
+# Archivos del Sistema Operativo
+# ==========================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
