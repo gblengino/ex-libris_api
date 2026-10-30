@@ -3,7 +3,7 @@ from rest_framework import viewsets, status, generics
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .serializers import RegisterSerializer, ProfileSerializer
+from .serializers import RegisterSerializer, ProfileSerializer, PublicUserSerializer
 
 User = get_user_model()
 
@@ -77,3 +77,20 @@ class ProfileViewSet(viewsets.ViewSet):
             {"message": "Tu cuenta ha sido borrada exitosamente."},
             status=status.HTTP_204_NO_CONTENT
         )
+
+class UserViewSet(viewsets.GenericViewSet):
+    queryset = User.objects.all().order_by('id')
+    serializer_class = PublicUserSerializer
+    permission_classes = [AllowAny]
+
+    def list(self, request):
+        queryset = self.queryset
+        page = self.paginate_queryset(queryset)
+        serializer = self.get_serializer(page, many=True)
+
+        return self.get_paginated_response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        user = self.get_object()
+        serializer = self.get_serializer(user)
+        return Response(serializer.data)

@@ -54,3 +54,14 @@ class ProfileSerializer(serializers.ModelSerializer):
             'created_at',
             'updated_at'
         ]
+
+class PublicUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'username',
+            'bio',
+            'country',
+        ]
+        read_only_fields = fields
