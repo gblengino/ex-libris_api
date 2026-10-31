@@ -28,6 +28,10 @@ class Publisher(BaseModel):
         verbose_name="País"
     )
 
+    class Meta:
+        verbose_name = "Editorial"
+        verbose_name_plural = "Editoriales"
+
     def __str__(self):
         return self.name
 
@@ -43,6 +47,10 @@ class Author(BaseModel):
         related_name='authors',
         verbose_name="Nacionalidad"
     )
+
+    class Meta:
+        verbose_name = "Autor/a"
+        verbose_name_plural = "Autores/as"
 
     def __str__(self):
         return self.name
@@ -71,6 +79,10 @@ class Book(BaseModel):
         on_delete=models.PROTECT,
         related_name='books'
     )
+
+    class Meta:
+        verbose_name = "Libro"
+        verbose_name_plural = "Libros"
 
     def __str__(self):
         return self.title
