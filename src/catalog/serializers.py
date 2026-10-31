@@ -26,7 +26,6 @@ class PublisherSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'name',
-            'website',
             'country'
         ]
         read_only_fields = fields
@@ -50,6 +49,24 @@ class BookSummarySerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
         fields = ['id', 'title', 'publication_date']
+
+
+class PublisherDetailSerializer(serializers.ModelSerializer):
+
+    country = CountrySummarySerializer(read_only=True)
+    books = BookSummarySerializer(read_only=True)
+
+    class Meta:
+        model = Publisher
+        fields = [
+            'id',
+            'name',
+            'website',
+            'country',
+            'books'
+        ]
+        read_only_fields = fields
+
 
 class BookSerializer(serializers.ModelSerializer):
 
@@ -90,6 +107,18 @@ class BookDetailSerializer(serializers.ModelSerializer):
         ]
 
 class AuthorSerializer(serializers.ModelSerializer):
+
+    country = CountrySummarySerializer(read_only=True)
+    class Meta:
+        model = Author
+        fields = [
+            'id',
+            'name',
+            'country',
+        ]
+        read_only_fields = fields
+
+class AuthorDetailSerializer(serializers.ModelSerializer):
 
     country = CountrySummarySerializer(read_only=True)
     books = BookSummarySerializer(many=True, read_only=True)
