@@ -1,6 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
+from reviews.serializers import UserReviewSummarySerializer
+from .summary_serializers import CountrySummarySerializer
 
 User = get_user_model()
 
@@ -38,6 +40,9 @@ class RegisterSerializer(serializers.ModelSerializer):
         return user
 
 class ProfileSerializer(serializers.ModelSerializer):
+
+    country = CountrySummarySerializer(read_only=True)
+
     class Meta:
         model = User
         fields = [
@@ -56,6 +61,10 @@ class ProfileSerializer(serializers.ModelSerializer):
         ]
 
 class PublicUserSerializer(serializers.ModelSerializer):
+
+    country = CountrySummarySerializer(read_only=True)
+    reviews = UserReviewSummarySerializer(many=True, read_only=True)
+
     class Meta:
         model = User
         fields = [

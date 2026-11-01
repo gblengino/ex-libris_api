@@ -2,6 +2,13 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from users.views import RegisterView
+from reviews.views import ReadingListViewSet
+from rest_framework.routers import DefaultRouter
+
+# Lo declare aqui simplemente para mantener limpia la api, la lista de lectura
+# deberia tener su propio endpoint y no estar englobada en /reviews/
+readinglist_router = DefaultRouter()
+readinglist_router.register(r'', ReadingListViewSet, basename="readinglist")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -11,5 +18,7 @@ urlpatterns = [
         path('refresh/', TokenRefreshView.as_view(), name='token_refresh')
     ])),
     path('api/users/', include("users.urls")),
-    path('api/catalog/', include("catalog.urls"))
+    path('api/catalog/', include("catalog.urls")),
+    path('api/reviews/', include("reviews.urls")),
+    path('api/readinglist/', include(readinglist_router.urls)),
 ]
