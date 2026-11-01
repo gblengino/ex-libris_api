@@ -6,7 +6,7 @@ from .serializers import (
     AuthorDetailSerializer,
     PublisherSerializer,
     PublisherDetailSerializer,
-    BookSerializer,
+    BookListSerializer,
     BookDetailSerializer
 )
 
@@ -46,4 +46,4 @@ class BookViewSet(viewsets.ReadOnlyModelViewSet):
     def get_serializer_class(self):
         if self.action == 'retrieve':
             return BookDetailSerializer
-        return BookSerializer
+        return BookListSerializer

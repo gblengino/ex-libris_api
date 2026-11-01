@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import Review, Comment, ReadingList
 from users.summary_serializers import UserSummarySerializer
-from catalog.serializers import BookSummarySerializer
+from catalog.summary_serializers import BookSummarySerializer
 
 # ---- SERIALIZERS PARA COMENTARIOS ----
 

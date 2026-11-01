@@ -1,6 +1,13 @@
 from rest_framework import serializers
 from .models import Genre, Author, Publisher, Book
 from users.summary_serializers import CountrySummarySerializer
+from reviews.serializers import BookReviewSummarySerializer
+from .summary_serializers import (
+    BookSummarySerializer,
+    AuthorSummarySerializer,
+    PublisherSummarySerializer,
+    GenreSummarySerializer
+    )
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
@@ -25,27 +32,6 @@ class PublisherSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = fields
 
-class AuthorSummarySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Author
-        fields = ['id', 'name']
-
-class GenreSummarySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Genre
-        fields = ['id', 'name']
-
-class PublisherSummarySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Publisher
-        fields = ['id', 'name']
-
-class BookSummarySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Book
-        fields = ['id', 'title', 'publication_date']
-
-
 class PublisherDetailSerializer(serializers.ModelSerializer):
 
     country = CountrySummarySerializer(read_only=True)
@@ -63,11 +49,12 @@ class PublisherDetailSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
 
-class BookSerializer(serializers.ModelSerializer):
+class BookListSerializer(serializers.ModelSerializer):
 
     authors = AuthorSummarySerializer(many=True, read_only=True)
     publisher = PublisherSummarySerializer(read_only=True)
     genres = GenreSummarySerializer(many=True, read_only=True)
+    reviews = BookReviewSummarySerializer(many=True, read_only=True)
 
     class Meta:
         model = Book
@@ -77,6 +64,7 @@ class BookSerializer(serializers.ModelSerializer):
             'authors',
             'publisher',
             'genres',
+            'reviews',
             'publication_date',
             'cover'
         ]
