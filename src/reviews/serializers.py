@@ -24,6 +24,7 @@ class CommentSerializer(serializers.ModelSerializer):
 class CommentCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
+        model = Comment
         fields = [
             'review',
             'content'
@@ -32,6 +33,7 @@ class CommentCreateSerializer(serializers.ModelSerializer):
 class CommentUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
+        model = Comment
         fields = ['content']
 
 # ---- SERIALIZERS PARA REVIEWS ----
@@ -140,11 +142,22 @@ class ReadingListSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
 class ReadingListCreateSerializer(serializers.ModelSerializer):
+    
     class Meta:
         model = ReadingList
         fields = ['book']
 
+    def validate_book(self, value):
+        user = self.context['request'].user
+
+        if ReadingList.objects.filter(user=user, book=value).exists():
+            raise serializers.ValidationError(
+                'Este libro ya se encuentra en tu lista de lectura.'
+            )
+        return value
+
 class ReadingListUpdateSerializer(serializers.ModelSerializer):
+    
     class Meta:
         model = ReadingList
         fields = ['status']
