@@ -29,13 +29,17 @@ class CommentCreateSerializer(serializers.ModelSerializer):
             'content'
         ]
 
+class CommentUpdateSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        fields = ['content']
+
 # ---- SERIALIZERS PARA REVIEWS ----
 
-class ReviewSerializer(serializers.ModelSerializer):
+class ReviewListSerializer(serializers.ModelSerializer):
     
     user = UserSummarySerializer(read_only=True)
     book = BookSummarySerializer(read_only=True)
-    comments = CommentSerializer(many=True, read_only=True)
     likes_count = serializers.IntegerField(read_only=True)
     is_liked = serializers.BooleanField(read_only=True)
     
@@ -50,18 +54,39 @@ class ReviewSerializer(serializers.ModelSerializer):
             'rating',
             'likes_count',
             'is_liked',
-            'comments',
             'created_at',
             'updated_at',
         ]
 
+class ReviewDetailSerializer(ReviewListSerializer):
+    comments = CommentSerializer(many=True, read_only=True)
+
+    class Meta(ReviewListSerializer.Meta):
+        fields = ReviewListSerializer.Meta.fields + ['comments']
+
 class ReviewCreateSerializer(serializers.ModelSerializer):
     # Serializer para crear reviews, el usuario se asigna desde el ViewSet
     # como medida de seguridad (su info viene mediante el auth system)
+
+    rating = serializers.IntegerField(min_value=1,max_value=10)
+
     class Meta:
         model = Review
         fields = [
             'book',
+            'title',
+            'content',
+            'rating'
+        ]
+
+class ReviewUpdateSerializer(serializers.ModelSerializer):
+    # Serializer para modificar aparte para impedir que un usuario pueda
+    # cambiar el libro al cual le hace la reseña.
+    rating = serializers.IntegerField(min_value=1,max_value=10)
+    
+    class Meta:
+        model = Review
+        fields = [
             'title',
             'content',
             'rating'
