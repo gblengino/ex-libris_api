@@ -1,11 +1,6 @@
 from rest_framework import serializers
 from .models import Genre, Author, Publisher, Book
-from users.models import Country
-
-class CountrySummarySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Country
-        fields = ['id', 'name']
+from users.summary_serializers import CountrySummarySerializer
 
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
