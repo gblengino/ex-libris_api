@@ -4,7 +4,7 @@ from .views import ReviewViewSet, CommentViewSet
 
 router = DefaultRouter()
 
-router.register(r"", ReviewViewSet, basename="reviews_vs")
+router.register(r"reviews", ReviewViewSet, basename="reviews_vs")
 router.register(r"comments", CommentViewSet, basename="comments_vs")
 
 urlpatterns = [
