@@ -1,6 +1,6 @@
 # 📚 Ex Libris - API REST & Plataforma de Reseñas Literarias
 
-> **Evaluación Final Integradora (EFI) 2026**[cite: 1, 3]  
+> **Evaluación Final Integradora (EFI) 2026**
 > **Espacio Curricular:** Ingeniería de Software  
 > **Carrera:** Técnico Superior en Desarrollo de Software – ITEC Río Cuarto  
 > **Docente:** Facundo Esteban Lemo  
@@ -9,12 +9,12 @@
 
 ## 📖 Descripción del Proyecto
 
-**Ex Libris** es una plataforma web para la gestión de catálogo bibliográfico, crítica literaria y listas de lectura[cite: 2, 5]. Este repositorio contiene el proyecto backend desarrollado con **Django** y **Django REST Framework (DRF)**[cite: 3, 5], el cual expone una API REST para ser consumida por la aplicación frontend (desarrollada en Next.js)[cite: 1, 5].
+**Ex Libris** es una plataforma web para la gestión de catálogo bibliográfico, crítica literaria y listas de lectura. Este repositorio contiene el proyecto backend desarrollado con **Django** y **Django REST Framework (DRF)**, el cual expone una API REST para ser consumida por la aplicación frontend (desarrollada en Next.js).
 
 ### 🎯 Características Principales
-* **Catálogo completo:** Gestión de autores, editoriales, géneros, países y libros[cite: 2].
-* **Interacción social:** Publicación de reseñas estructuradas con puntuación, comentarios y sistema de "Me Gusta"[cite: 2].
-* **Listas de lectura:** Organización del estante personal de los usuarios (Por leer, Leyendo, Leído, Abandonado)[cite: 2].
+* **Catálogo completo:** Gestión de autores, editoriales, géneros, países y libros.
+* **Interacción social:** Publicación de reseñas estructuradas con puntuación, comentarios y sistema de "Me Gusta".
+* **Listas de lectura:** Organización del estante personal de los usuarios (Por leer, Leyendo, Leído, Abandonado).
 * **Seguridad & Autenticación:** Autenticación por Tokens (SimpleJWT) y sesión, con roles y permisos en los endpoints.
 * **Documentación interactiva:** Swagger UI y Redoc para exploración de la API REST.
 
@@ -22,53 +22,51 @@
 
 ## 🗄️ Planificación de la Base de Datos (DER)
 
-La arquitectura de la base de datos está compuesta por **13 modelos interactivos y relacionales** organizados en 3 aplicaciones modulares (`users`, `catalogo` y `resenas`)[cite: 2, 3, 4]:
+La arquitectura de la base de datos está compuesta por **13 modelos interactivos y relacionales** organizados en 3 aplicaciones modulares (`users`, `catalogo` y `resenas`):
 
 ![Diagrama Entidad Relación](docs/der-ex-libris.png)
-*(Adjunto de planificación del Modelo Entidad-Relación de la base de datos)*[cite: 3, 6].
 
 ### 1. Modelos por Aplicación
 
-* **Core (`apps.core`):**
-  * `ModeloBase`: Clase abstracta que provee trazabilidad con `is_active` (borrado lógico), `created_at` y `updated_at`[cite: 2].
-* **Usuarios (`apps.users`):**
-  * `Usuario`: Modelo personalizado que hereda de `AbstractUser` e incluye campos adicionales como `pais` y `bio`[cite: 2, 4].
-  * `Pais`: Catálogo geográfico para ubicación de usuarios, autores y editoriales[cite: 2].
-* **Catálogo (`apps.catalogo`):**
-  * `Genero`: Géneros y clasificaciones literarias[cite: 2].
-  * `Editorial`: Casas editoriales con país de origen y sitio web[cite: 2].
-  * `Autor`: Ficha biográfica de escritores[cite: 2].
-  * `Libro`: Entidad central del catálogo con ISBN, sinopsis, portada y relaciones con autor, género y editorial[cite: 2].
-  * `LibroAutor` & `LibroGenero`: Tablas intermedias explícitas con metadata relacional[cite: 2].
-* **Reseñas e Interacciones (`apps.resenas`):**
-  * `Resena`: Críticas literarias con calificación de 1 a 5 estrellas escritas por usuarios[cite: 2].
-  * `Comentario`: Hilos de debate en cada reseña[cite: 2].
-  * `LikeResena` & `LikeComentario`: Registro de votos "Me Gusta" en reseñas y comentarios[cite: 2].
-  * `ListaLectura`: Estante virtual del usuario con estado restringido (`POR_LEER`, `LEYENDO`, `LEIDO`, `ABANDONADO`)[cite: 2].
+* **Core (`core`):**
+  * `BaseModel`: Clase abstracta que provee trazabilidad con `is_active` (borrado lógico), `created_at` y `updated_at`.
+* **Usuarios (`users`):**
+  * `CustomUser`: Modelo personalizado que hereda de `AbstractUser` e incluye campos adicionales como `pais` y `bio`.
+  * `Country`: Catálogo geográfico para ubicación de usuarios, autores y editoriales.
+* **Catálogo (`catalog`):**
+  * `Genre`: Géneros y clasificaciones literarias.
+  * `Publisher`: Casas editoriales con país de origen y sitio web.
+  * `Author`: Ficha biográfica de escritores.
+  * `Book`: Entidad central del catálogo con ISBN, sinopsis, portada y relaciones con autor, género y editorial.
+* **Reseñas e Interacciones (`reviews`):**
+  * `Review`: Críticas literarias con calificación de 1 a 5 estrellas escritas por usuarios.
+  * `Comment`: Hilos de debate en cada reseña.
+  * `LikeReview` & `LikeComemnt`: Registro de votos "Me Gusta" en reseñas y comentarios.
+  * `ReadingList`: Estante virtual del usuario con estado restringido (`POR_LEER`, `LEYENDO`, `LEIDO`, `ABANDONADO`).
 
 ---
 
 ## 🛠️ Stack Tecnológico
 
-* **Lenguaje:** Python 3.12[cite: 3, 5]
-* **Framework Web:** Django 5.x + Django REST Framework[cite: 3, 5]
-* **Gestor de Entornos & Dependencias:** `uv`[cite: 3]
-* **Base de Datos:** PostgreSQL (en contenedor Docker)[cite: 3]
-* **Autenticación:** DRF SimpleJWT (JSON Web Tokens)[cite: 3]
-* **Contenerización:** Docker & Docker Compose[cite: 3]
+* **Lenguaje:** Python 3.12
+* **Framework Web:** Django 5.x + Django REST Framework
+* **Gestor de Entornos & Dependencias:** `uv`
+* **Base de Datos:** PostgreSQL (en contenedor Docker)
+* **Autenticación:** DRF SimpleJWT (JSON Web Tokens)
+* **Contenerización:** Docker & Docker Compose
 
 ---
 
 ## 🚀 Instrucciones de Ejecución Local
 
 ### Prerrequisitos
-* Tienes instalado **Docker** y **Docker Desktop**.
+* Tienes instalado **Docker Engine** y **Docker Compose**.
 * Tienes instalado el gestor de paquetes **`uv`**.
 
 ### 1. Clonar el repositorio y configurar variables de entorno
 ```bash
-git clone [https://github.com/tu-usuario/ex-libris-back.git](https://github.com/tu-usuario/ex-libris-back.git)
-cd ex-libris-back
+git clone [https://github.com/gblengino/ex-libris_api.git](git@github.com:gblengino/ex-libris_api.git)
+cd ex-libris_api
 
 # Crear archivo de variables de entorno a partir de la plantilla
 cp .env.example .env
@@ -104,7 +102,7 @@ cp .env.example .env
 
 ---
 
-### 3. Opción B: Ejecución 100% en Docker
+### 2. Opción B: Ejecución 100% en Docker
 
 Para ejecutar el backend completo junto a la base de datos dentro de contenedores:
 ```bash
@@ -117,18 +115,68 @@ docker compose up --build
 
 Una vez iniciado el servidor, puedes acceder a la API navegable y a la documentación OpenAPI en:
 
-* **Swagger UI:** `http://127.0.0.1:8000/api/docs/`[cite: 4]
-* **Redoc:** `http://127.0.0.1:8000/api/redoc/`[cite: 4]
-* **Panel de Administración de Django:** `http://127.0.0.1:8000/admin/`[cite: 4]
+* **Página de bienvenida:** `http://127.0.0.1:8000/`
+* **Swagger UI:** `http://127.0.0.1:8000/api/swagger-ui/`
+* **Redoc:** `http://127.0.0.1:8000/api/redoc/`
+* **Panel de Administración de Django:** `http://127.0.0.1:8000/admin/`
 
 ---
 
 ## 📸 Capturas del Sistema
 
-*(Se añadirán imágenes de la API navegable, Swagger UI y el Panel de Administración durante la integración final)*[cite: 4].
+Esta sección presenta las principales funcionalidades implementadas en la API REST.
+
+### 1. Página de bienvenida
+
+![Página de bienvenida](docs/screenshots/01-welcome.png)
+
+### 2. Documentación de la API
+
+![Documentación Swagger](docs/screenshots/02-swagger.png)
+
+![Documentación Redoc](docs/screenshots/03-redoc.png)
+### 3. Catálogo
+
+#### Listado de libros
+
+![Lista de Libros](docs/screenshots/04-books-list.png)
+
+#### Filtrado de Lista de Libros
+
+![Detalle de un libro](docs/screenshots/05-book-filters.png)
+
+### 4. Autenticación
+
+![Registro](docs/screenshots/06-register.png)
+
+![Autenticación](docs/screenshots/07-authentication.png)
+
+### 5. Endpoint protegido
+
+![Endpoint protegido](docs/screenshots/08-protected-endpoint.png)
+
+### 6. Reseñas e interacciones
+
+#### Creación de Reseñas
+
+![Creación de reseñas](docs/screenshots/09-review-created.png)
+
+#### Acciones de interacción
+
+![Dar like a una reseña](docs/screenshots/10-like-review.png)
+
+### 7. Django Admin
+
+#### Gestión de reseñas
+
+![Administración de reseñas](docs/screenshots/11-admin-reviews.png)
+
+### Gestión de libros
+
+![Administración de libros](docs/screenshots/12-admin-books.png)
 
 ---
 
 ## 👥 Integrantes
 
-* **Giuliano Blengino** - *Desarrollo Backend / Ingeniería de Software*[cite: 4]
+* **Giuliano Blengino** - *Desarrollo Backend / Ingeniería de Software*
