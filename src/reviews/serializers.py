@@ -43,6 +43,7 @@ class ReviewListSerializer(serializers.ModelSerializer):
     
     user = UserSummarySerializer(read_only=True)
     book = BookSummarySerializer(read_only=True)
+    comments_count = serializers.IntegerField(read_only=True)
     likes_count = serializers.IntegerField(read_only=True)
     is_liked = serializers.BooleanField(read_only=True)
     
@@ -54,6 +55,7 @@ class ReviewListSerializer(serializers.ModelSerializer):
             'book',
             'title',
             'rating',
+            'comments_count',
             'likes_count',
             'is_liked',
             'created_at',
@@ -64,7 +66,7 @@ class ReviewDetailSerializer(ReviewListSerializer):
 
     user = UserSummarySerializer(read_only=True)
     book = BookSummarySerializer(read_only=True)
-    comments = CommentSerializer(many=True, read_only=True)
+    latest_comments = CommentSerializer(many=True, read_only=True)
     likes_count = serializers.IntegerField(read_only=True)
     is_liked = serializers.BooleanField(read_only=True)
     
@@ -77,7 +79,7 @@ class ReviewDetailSerializer(ReviewListSerializer):
             'title',
             'content',
             'rating',
-            'comments',
+            'latest_comments',
             'likes_count',
             'is_liked',
             'created_at',
