@@ -23,10 +23,11 @@ readinglist_router = DefaultRouter()
 readinglist_router.register(r'', ReadingListViewSet, basename="readinglist")
 
 urlpatterns = [
+    path('', include('core.urls')),
     path('admin/', admin.site.urls),
 
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-    path('api/schema/swagger', SpectacularSwaggerView.as_view(url_name='schema'), name='swagget-ui'),
+    path('api/schema/swagger', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 
     path('api/auth/', include([
