@@ -31,7 +31,9 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         # Esta lógica reemplaza a tu antiguo bloque en la vista
+        validated_data = validated_data.copy()
         validated_data.pop('password2', None)
+        
         password = validated_data.pop('password')
         
         user = User(**validated_data)

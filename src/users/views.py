@@ -26,22 +26,7 @@ class RegisterView(generics.CreateAPIView):
             {'message': 'Usuario registrado correctamente.'},
             status=status.HTTP_201_CREATED
         )
-
-    # Creacion de usuario
-    def post(self, request):
-        serializer = RegisterSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        data = serializer.validated_data.copy()
-        data.pop('password2', None) # Elimina la confirmacion de contraseña
-
-        password = data.pop('password')
-
-        user = User(**data)
-        # set_password() hashea la contraseña
-        user.set_password(password)
-        user.save()
-
+    
         return Response(
             {'message': 'Usuario registrado correctamente.'},
             status=status.HTTP_201_CREATED
