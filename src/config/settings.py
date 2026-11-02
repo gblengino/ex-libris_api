@@ -96,6 +96,7 @@ SPECTACULAR_SETTINGS = {
     "TITLE": "Ex Libris API",
     "DESCRIPTION": "API REST para Plataforma de Reseñas Literarias",
     "VERSION": "1.0.0",
+    'REDOC_DIST': 'https://cdn.jsdelivr.net/npm/redoc@2',
 }
 
 SIMPLE_JWT = {
