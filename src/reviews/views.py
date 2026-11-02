@@ -2,7 +2,11 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
-from django.db.models import Prefetch
+
+from django.db.models import Prefetch, Count
+
+from django_filters.rest_framework import DjangoFilterBackend
+
 from .models import Review, Comment, ReadingList, LikeComment, LikeReview
 from .serializers import (
     ReviewListSerializer,
@@ -23,6 +27,9 @@ class ReviewViewSet(viewsets.ModelViewSet):
     
     permission_classes = [IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
 
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['book']
+
     # Consulta optimizada
     def get_queryset(self):
         # Trae usuario y libro para el nested
@@ -32,15 +39,27 @@ class ReviewViewSet(viewsets.ModelViewSet):
         )
         
         if self.action == 'retrieve':
+
+            latest_comments = comments_with_like_data(
+                Comment.objects.select_related('user').order_by(
+                    '-created_at',
+                    '-id'
+                ),
+                self.request.user
+            )[:10]
+
             # Si es un retrieve, prefetchea los comentarios
             queryset = queryset.prefetch_related(
                 Prefetch(
                     'comments',
-                    queryset=comments_with_like_data(
-                        Comment.objects.select_related('user'),
-                        self.request.user
-                    )
+                    queryset=latest_comments,
+                    to_attr='latest_comments'
                 )
+            )
+
+        if self.action == 'list':
+            queryset = queryset.annotate(
+                comments_count=Count('comments', distinct=True)
             )
 
         # Usa la funcion de querysets.py para calcular la
@@ -106,6 +125,9 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     permission_classes = [IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
 
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['review']
+
     def get_queryset(self):
 
         queryset = Comment.objects.select_related('user')
@@ -167,7 +189,7 @@ class ReadingListViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return ReadingList.objects.filter(
             user=self.request.user
-        ).select_related('book').order_by('-created-at', '-id')
+        ).select_related('book').order_by('-created_at', '-id')
 
     def get_serializer_class(self):
 

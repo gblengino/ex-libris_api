@@ -54,7 +54,8 @@ class BookListSerializer(serializers.ModelSerializer):
     authors = AuthorSummarySerializer(many=True, read_only=True)
     publisher = PublisherSummarySerializer(read_only=True)
     genres = GenreSummarySerializer(many=True, read_only=True)
-    reviews = BookReviewSummarySerializer(many=True, read_only=True)
+    reviews_count = serializers.IntegerField(read_only=True)
+    is_in_reading_list = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Book
@@ -64,9 +65,10 @@ class BookListSerializer(serializers.ModelSerializer):
             'authors',
             'publisher',
             'genres',
-            'reviews',
+            'reviews_count',
             'publication_date',
-            'cover'
+            'cover',
+            'is_in_reading_list'
         ]
 
 class BookDetailSerializer(serializers.ModelSerializer):
@@ -74,6 +76,9 @@ class BookDetailSerializer(serializers.ModelSerializer):
     authors = AuthorSummarySerializer(many=True, read_only=True)
     publisher = PublisherSummarySerializer(read_only=True)
     genres = GenreSummarySerializer(many=True, read_only=True)
+    reviews_count = serializers.IntegerField(read_only=True)
+    latest_reviews = BookReviewSummarySerializer(many=True, read_only=True)
+    is_in_reading_list = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Book
@@ -85,8 +90,11 @@ class BookDetailSerializer(serializers.ModelSerializer):
             'publisher',
             'isbn',
             'cover',
+            'reviews_count',
+            'latest_reviews',
             'publication_date',
             'genres',
+            'is_in_reading_list'
         ]
 
 class AuthorSerializer(serializers.ModelSerializer):
