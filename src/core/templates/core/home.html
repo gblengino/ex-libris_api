@@ -55,9 +55,18 @@
                 </div>
             </a>
 
-            <span class="hidden sm:block text-xs tracking-widest uppercase text-ink/50">
-                API REST · v1
-            </span>
+            <div class="hidden sm:flex items-center gap-5">
+                <a href="{% url 'admin:index' %}"
+                class="text-xs tracking-widest uppercase text-ink/60 hover:text-burgundy transition-colors">
+                    Panel Admin ↗
+                </a>
+
+                <span class="text-ink/20">|</span>
+
+                <span class="text-xs tracking-widest uppercase text-ink/50">
+                    API REST · v1
+                </span>
+            </div>
         </div>
     </header>
 
