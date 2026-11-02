@@ -189,7 +189,7 @@ class ReadingListViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return ReadingList.objects.filter(
             user=self.request.user
-        ).select_related('book').order_by('-created-at', '-id')
+        ).select_related('book').order_by('-created_at', '-id')
 
     def get_serializer_class(self):
 

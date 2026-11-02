@@ -1,11 +1,11 @@
 from rest_framework import viewsets
 from rest_framework.filters import SearchFilter, OrderingFilter
 
-from django.db.models import Prefetch, Count
+from django.db.models import Prefetch, Count, Exists, OuterRef, Value, BooleanField
 from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import Genre, Author, Publisher, Book
-from reviews.models import Review
+from reviews.models import Review, ReadingList
 from .serializers import (
     GenreSerializer,
     AuthorSerializer,
@@ -63,11 +63,24 @@ class BookViewSet(viewsets.ReadOnlyModelViewSet):
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = BookFilter
     search_fields = ['title']
-    ordering_fields = ['title', 'publication_date']
+    ordering_fields = ['title', 'publication_date', 'id']
 
     def get_queryset(self):
         
         queryset = Book.objects.all().select_related('publisher').prefetch_related('authors', 'genres').order_by('title', 'id')
+
+        if self.request.user.is_authenticated:
+            user_reading_list = ReadingList.objects.filter(
+                user=self.request.user,
+                book=OuterRef('pk')
+            )
+            queryset = queryset.annotate(
+                is_in_reading_list = Exists(user_reading_list)
+            )
+        else:
+            queryset = queryset.annotate(
+                is_in_reading_list = Value(False, output_field=BooleanField())
+            )
         
         if self.action == 'retrieve':
 
@@ -87,10 +100,10 @@ class BookViewSet(viewsets.ReadOnlyModelViewSet):
                 )
             )
 
-        if self.action == 'list':
-            queryset = queryset.annotate(
-                reviews_count=Count('reviews', distinct=True)
-            )
+        queryset = queryset.annotate(
+            reviews_count=Count('reviews', distinct=True)
+        )
+
         return queryset
 
     def get_serializer_class(self):
