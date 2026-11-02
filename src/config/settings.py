@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
     'drf_spectacular',
+    'corsheaders',
     'core',
     'users',
     'catalog',
@@ -54,6 +55,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -61,6 +63,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+cors_origins = os.getenv("CORS_ORIGINS", "")
+CORS_ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in cors_origins.split(",")
+    if origin.strip()
 ]
 
 ROOT_URLCONF = 'config.urls'
