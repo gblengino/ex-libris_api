@@ -2,7 +2,7 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
-
+from django.db.models import Prefetch
 from .models import Review, Comment, ReadingList, LikeComment, LikeReview
 from .serializers import (
     ReviewListSerializer,
@@ -33,7 +33,15 @@ class ReviewViewSet(viewsets.ModelViewSet):
         
         if self.action == 'retrieve':
             # Si es un retrieve, prefetchea los comentarios
-            queryset = queryset.prefetch_related('comments__user')
+            queryset = queryset.prefetch_related(
+                Prefetch(
+                    'comments',
+                    queryset=comments_with_like_data(
+                        Comment.objects.select_related('user'),
+                        self.request.user
+                    )
+                )
+            )
 
         # Usa la funcion de querysets.py para calcular la
         # cantidad de likes que tiene la review
@@ -72,10 +80,12 @@ class ReviewViewSet(viewsets.ModelViewSet):
     def like(self, request, pk=None):
         review = self.get_object()
 
-        LikeReview.objects.get_or_create(
+        like, created = LikeReview.objects.get_or_create(
             user = request.user,
             review = review
         )
+        if created:
+            return Response(status=status.HTTP_201_CREATED)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -128,10 +138,12 @@ class CommentViewSet(viewsets.ModelViewSet):
     def like(self, request, pk=None):
         comment = self.get_object()
 
-        LikeComment.objects.get_or_create(
+        like, created = LikeComment.objects.get_or_create(
             user = request.user,
             comment = comment
         )
+        if created:
+            return Response(status=status.HTTP_201_CREATED)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 

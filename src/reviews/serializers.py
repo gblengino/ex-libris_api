@@ -18,6 +18,7 @@ class CommentSerializer(serializers.ModelSerializer):
             'user',
             'content',
             'likes_count',
+            'is_liked',
             'created_at'
         ]
 
@@ -52,7 +53,6 @@ class ReviewListSerializer(serializers.ModelSerializer):
             'user',
             'book',
             'title',
-            'content',
             'rating',
             'likes_count',
             'is_liked',
@@ -61,10 +61,28 @@ class ReviewListSerializer(serializers.ModelSerializer):
         ]
 
 class ReviewDetailSerializer(ReviewListSerializer):
-    comments = CommentSerializer(many=True, read_only=True)
 
-    class Meta(ReviewListSerializer.Meta):
-        fields = ReviewListSerializer.Meta.fields + ['comments']
+    user = UserSummarySerializer(read_only=True)
+    book = BookSummarySerializer(read_only=True)
+    comments = CommentSerializer(many=True, read_only=True)
+    likes_count = serializers.IntegerField(read_only=True)
+    is_liked = serializers.BooleanField(read_only=True)
+    
+    class Meta:
+        model = Review
+        fields = [
+            'id',
+            'user',
+            'book',
+            'title',
+            'content',
+            'rating',
+            'comments',
+            'likes_count',
+            'is_liked',
+            'created_at',
+            'updated_at',
+        ]
 
 class ReviewCreateSerializer(serializers.ModelSerializer):
     # Serializer para crear reviews, el usuario se asigna desde el ViewSet
