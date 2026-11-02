@@ -73,6 +73,7 @@ class PublicUserSerializer(serializers.ModelSerializer):
             'id',
             'username',
             'bio',
+            'reviews',
             'country',
         ]
         read_only_fields = fields

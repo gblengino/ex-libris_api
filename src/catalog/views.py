@@ -3,6 +3,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 
 from django.db.models import Prefetch, Count, Exists, OuterRef, Value, BooleanField
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_spectacular.utils import extend_schema, extend_schema_view
 
 from .models import Genre, Author, Publisher, Book
 from reviews.models import Review, ReadingList
@@ -18,10 +19,29 @@ from .serializers import (
 from reviews.querysets import reviews_with_like_data
 from .filters import BookFilter
 
+@extend_schema(
+    auth=[],
+    summary='Obtener Géneros',
+    description='Este endpoint devuelve la lista completa de géneros que pueden asignarse' \
+    'a los libros.'
+)
 class GenreViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Genre.objects.all().order_by('name', 'id')
     serializer_class = GenreSerializer
 
+@extend_schema_view(
+    list=extend_schema(
+        summary = 'Listar Autores',
+        description = 'Retorna una lista de autores paginada. Soporta búsqueda por nombre y ' \
+        'ordenación por id y nombre (alfabético).'
+    ),
+    retrieve=extend_schema(
+        summary = 'Obtener detalle de Autor/a',
+        description = 'Retorna información detallada de un autor, así como una lista de sus ' \
+        'obras anidada.'
+    )
+)
+@extend_schema(auth=[])
 class AuthorViewSet(viewsets.ReadOnlyModelViewSet):
 
     filter_backends = [SearchFilter, OrderingFilter]
@@ -40,6 +60,19 @@ class AuthorViewSet(viewsets.ReadOnlyModelViewSet):
             return AuthorDetailSerializer
         return AuthorSerializer
 
+@extend_schema_view(
+    list=extend_schema(
+        summary = 'Listar Editoriales',
+        description = 'Retorna una lista de editoriales paginada. Soporta búsqueda por nombre y ' \
+        'ordenación por id y nombre (alfabético).'
+    ),
+    retrieve=extend_schema(
+        summary = 'Obtener detalle de Editorial',
+        description = 'Retorna información detallada de una editorial, así como una lista de sus ' \
+        'obras editadas anidada.'
+    )
+)
+@extend_schema(auth=[])
 class PublisherViewSet(viewsets.ReadOnlyModelViewSet):
 
     filter_backends = [SearchFilter, OrderingFilter]
@@ -58,6 +91,21 @@ class PublisherViewSet(viewsets.ReadOnlyModelViewSet):
             return PublisherDetailSerializer
         return PublisherSerializer
 
+@extend_schema_view(
+    list=extend_schema(
+        summary = 'Listar Libros',
+        description = 'Retorna una lista de libros paginada. Soporta búsqueda por título y una serie de ' \
+        'filtros: Género (ID), Autor (coincidencia parcial del nombre) y Editorial (coincidencia parcial ' \
+        'del nombre). Ordenación por título (alfabético) o fecha de publicación. ' \
+        'Si se envía información de un usuario autenticado, devuelve si este tiene guardado el libro en su lista.'
+    ),
+    retrieve=extend_schema(
+        summary = 'Obtener detalle de un Libro',
+        description = 'Retorna información detallada de un libro, incluyendo información anidada de sus ' \
+        'autores, editorial, géneros y reseñas recientes. ' \
+        'Si se envía información de un usuario autenticado, devuelve si este tiene guardado el libro en su lista.'
+    )
+)
 class BookViewSet(viewsets.ReadOnlyModelViewSet):
 
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]

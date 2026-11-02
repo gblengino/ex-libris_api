@@ -3,6 +3,8 @@ from rest_framework import viewsets, status, generics
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from drf_spectacular.utils import extend_schema
+
 from .serializers import RegisterSerializer, ProfileSerializer, PublicUserSerializer
 
 User = get_user_model()
@@ -17,6 +19,14 @@ class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
 
+    @extend_schema(
+            summary='Registro',
+            description='Registra nuevos usuarios en la plataforma.',
+            auth=[],
+            )
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
+    
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -26,17 +36,26 @@ class RegisterView(generics.CreateAPIView):
             {'message': 'Usuario registrado correctamente.'},
             status=status.HTTP_201_CREATED
         )
-    
-        return Response(
-            {'message': 'Usuario registrado correctamente.'},
-            status=status.HTTP_201_CREATED
-        )
 
-class ProfileViewSet(viewsets.ViewSet):
+@extend_schema(
+    description='La información del usuario se envía y recibe dentro del token de autenticación JWT,' \
+    'por eso no se solicita el id del usuario.'
+)
+class ProfileViewSet(viewsets.GenericViewSet):
 
     permission_classes = [IsAuthenticated]
 
-    # Action especifico para 
+    @extend_schema(
+        summary='Usuario obtiene su perfil',
+        methods=['GET'],
+        responses=ProfileSerializer
+    )
+    @extend_schema(
+        summary='Usuario edita su perfil',
+        methods=['PATCH'],
+        request=ProfileSerializer,
+        responses=ProfileSerializer
+    )
     @action(detail=False, methods=['get', 'patch'])
     def profile(self, request):
         if request.method == 'GET':
@@ -54,6 +73,12 @@ class ProfileViewSet(viewsets.ViewSet):
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @extend_schema(
+        summary='Usuario borra su perfil',
+        methods=['DELETE'],
+        request=None,
+        responses={204: None}
+    )
     @action(detail=False, methods=['delete'])
     def delete(self, request):
         user = request.user
@@ -68,6 +93,10 @@ class UserViewSet(viewsets.GenericViewSet):
     serializer_class = PublicUserSerializer
     permission_classes = [AllowAny]
 
+    @extend_schema(
+            summary="Lista de Usuarios",
+            description="Obtiene la lista de todos los usuarios paginada."
+    )
     def list(self, request):
         queryset = self.queryset
         page = self.paginate_queryset(queryset)
@@ -75,6 +104,11 @@ class UserViewSet(viewsets.GenericViewSet):
 
         return self.get_paginated_response(serializer.data)
 
+    @extend_schema(
+            summary='Detalle de Usuario',
+            description='Responde la información pública de un usuario.' \
+            'Se puede usar para mostrar perfiles.'
+    )
     def retrieve(self, request, pk=None):
         user = self.get_object()
         serializer = self.get_serializer(user)
