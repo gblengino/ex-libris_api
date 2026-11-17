@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.validators import UniqueTogetherValidator
 from .models import Review, Comment, ReadingList
 from users.summary_serializers import UserSummarySerializer
 from catalog.summary_serializers import BookSummarySerializer
@@ -90,15 +91,26 @@ class ReviewCreateSerializer(serializers.ModelSerializer):
     # Serializer para crear reviews, el usuario se asigna desde el ViewSet
     # como medida de seguridad (su info viene mediante el auth system)
 
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     rating = serializers.IntegerField(min_value=1,max_value=10)
 
     class Meta:
         model = Review
         fields = [
+            'id',
+            'user',
             'book',
             'title',
             'content',
             'rating'
+        ]
+        read_only_fields = ['id']
+        validators = [
+            UniqueTogetherValidator(
+            queryset=Review.objects.all(),
+            fields=['user', 'book'],
+            message='Ya escribiste una review para este libro.',
+            )
         ]
 
 class ReviewUpdateSerializer(serializers.ModelSerializer):

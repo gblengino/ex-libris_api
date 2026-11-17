@@ -83,7 +83,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
 
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['book']
+    filterset_fields = ['book', 'user']
 
     # Consulta optimizada
     def get_queryset(self):
@@ -91,6 +91,8 @@ class ReviewViewSet(viewsets.ModelViewSet):
         queryset = Review.objects.select_related(
             'user',
             'book',
+        ).prefetch_related(
+            'book__authors',
         )
         
         if self.action == 'retrieve':
