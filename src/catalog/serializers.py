@@ -79,6 +79,7 @@ class BookDetailSerializer(serializers.ModelSerializer):
     reviews_count = serializers.IntegerField(read_only=True)
     latest_reviews = BookReviewSummarySerializer(many=True, read_only=True)
     is_in_reading_list = serializers.BooleanField(read_only=True)
+    average_rating = serializers.FloatField(read_only=True)
 
     class Meta:
         model = Book
@@ -91,6 +92,7 @@ class BookDetailSerializer(serializers.ModelSerializer):
             'isbn',
             'cover',
             'reviews_count',
+            'average_rating',
             'latest_reviews',
             'publication_date',
             'genres',

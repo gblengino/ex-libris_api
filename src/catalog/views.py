@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from rest_framework.filters import SearchFilter, OrderingFilter
 
-from django.db.models import Prefetch, Count, Exists, OuterRef, Value, BooleanField
+from django.db.models import Prefetch, Count, Exists, OuterRef, Value, BooleanField, Avg
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema, extend_schema_view
 
@@ -82,6 +82,7 @@ class PublisherViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         queryset = Publisher.objects.all().order_by('name', 'id')
+        
         if self.action == 'retrieve':
             queryset = Publisher.objects.all().prefetch_related('books')
         return queryset
@@ -116,7 +117,9 @@ class BookViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         
         queryset = Book.objects.all().select_related('publisher').prefetch_related('authors', 'genres').order_by('title', 'id')
-
+        queryset = Book.objects.annotate(
+            average_rating=Avg("reviews__rating")
+        )
         if self.request.user.is_authenticated:
             user_reading_list = ReadingList.objects.filter(
                 user=self.request.user,
