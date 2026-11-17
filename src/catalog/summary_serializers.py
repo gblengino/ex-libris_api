@@ -17,7 +17,10 @@ class PublisherSummarySerializer(serializers.ModelSerializer):
         fields = ['id', 'name']
 
 class BookSummarySerializer(serializers.ModelSerializer):
+
+    authors = AuthorSummarySerializer(many=True, read_only=True)
+
     class Meta:
         model = Book
-        fields = ['id', 'title', 'publication_date']
+        fields = ['id', 'title', 'cover', 'publication_date', 'authors']
 
