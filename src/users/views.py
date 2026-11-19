@@ -44,6 +44,7 @@ class RegisterView(generics.CreateAPIView):
 class ProfileViewSet(viewsets.GenericViewSet):
 
     permission_classes = [IsAuthenticated]
+    serializer_class = ProfileSerializer
 
     @extend_schema(
         summary='Usuario obtiene su perfil',
